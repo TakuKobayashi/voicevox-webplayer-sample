@@ -24,6 +24,12 @@ jobs:
     - name: yarn install
       working-directory: ${{ matrix.root-project-path }}
       run: yarn install
+    - name: Register .env
+      working-directory: ${{ matrix.root-project-path }}
+      env:
+        BASE_PATH: ${{ secrets.BASE_PATH }}
+      run: |
+        echo "BASE_PATH=${BASE_PATH}" >> ./.env
     - name: build html
       working-directory: ${{ matrix.root-project-path }}
       run: yarn run build

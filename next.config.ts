@@ -1,12 +1,13 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
+const nextConfig= {
   output: "export",
-  reactStrictMode: true,
+  reactStrictMode: false,
+  assetPrefix: process.env.BASE_PATH || "",
+  basePath: process.env.BASE_PATH || "",
   trailingSlash: true,
-  images: {
-    unoptimized: true,
+  publicRuntimeConfig: {
+    root: process.env.BASE_PATH || "",
   },
+  optimizeFonts: false,
 };
 
 export default nextConfig;
