@@ -10,7 +10,7 @@ const Home = () => {
   const [speakers, setSpeakers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [audioUrl, setAudioUrl] = useState(null);
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [loadingSpeakers, setLoadingSpeakers] = useState(true);
   const [isPlaying, setIsPlaying] = useState(false);
   const [audioRef, setAudioRef] = useState(null);
