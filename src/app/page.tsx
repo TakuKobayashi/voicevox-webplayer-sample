@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Volume2, Loader2, Download, AlertCircle } from 'lucide-react';
+import axios from 'axios';
 
 const Home = () => {
   const [text, setText] = useState('');
@@ -14,23 +15,20 @@ const Home = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [audioRef, setAudioRef] = useState(null);
 
-  const VOICEVOX_API = 'http://localhost:50021';
+  const VOICEVOX_API = process.env.NEXT_PUBLIC_VOICEVOX_API_ROOT_URL;
 
   useEffect(() => {
     fetchSpeakers();
   }, []);
 
   const fetchSpeakers = async () => {
-    try {
-      const response = await fetch(`${VOICEVOX_API}/speakers`);
-      if (!response.ok) throw new Error('話者情報の取得に失敗しました');
-      const data = await response.json();
-      setSpeakers(data);
-      setLoadingSpeakers(false);
-    } catch (err) {
+    const response = await axios.get(`${VOICEVOX_API}/speakers`).catch((error) => {
       setError('Voicevox APIに接続できません。ローカルでVoicevoxが起動しているか確認してください。');
       setLoadingSpeakers(false);
-    }
+      return Promise.reject(error);
+    });
+    setSpeakers(response.data);
+    setLoadingSpeakers(false);
   };
 
   const synthesize = async () => {
