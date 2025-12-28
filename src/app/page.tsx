@@ -1,5 +1,4 @@
-
-"use client"
+'use client';
 
 import { useState, useEffect } from 'react';
 import { Volume2, Loader2, Download, AlertCircle } from 'lucide-react';
@@ -45,23 +44,19 @@ const Home = () => {
     setAudioUrl(null);
 
     try {
-      const queryResponse = await fetch(
-        `${VOICEVOX_API}/audio_query?text=${encodeURIComponent(text)}&speaker=${speaker}`,
-        { method: 'POST' }
-      );
-      
+      const queryResponse = await fetch(`${VOICEVOX_API}/audio_query?text=${encodeURIComponent(text)}&speaker=${speaker}`, {
+        method: 'POST',
+      });
+
       if (!queryResponse.ok) throw new Error('音声クエリの作成に失敗しました');
-      
+
       const queryData = await queryResponse.json();
 
-      const synthesisResponse = await fetch(
-        `${VOICEVOX_API}/synthesis?speaker=${speaker}`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(queryData)
-        }
-      );
+      const synthesisResponse = await fetch(`${VOICEVOX_API}/synthesis?speaker=${speaker}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(queryData),
+      });
 
       if (!synthesisResponse.ok) throw new Error('音声合成に失敗しました');
 
@@ -135,19 +130,14 @@ const Home = () => {
                   <span style={styles.loadingText}>話者情報を読み込み中...</span>
                 </div>
               ) : (
-                <select
-                  value={speaker}
-                  onChange={(e) => setSpeaker(Number(e.target.value))}
-                  style={styles.select}
-                  disabled={loading}
-                >
-                  {speakers.map((s) => (
+                <select value={speaker} onChange={(e) => setSpeaker(Number(e.target.value))} style={styles.select} disabled={loading}>
+                  {speakers.map((s) =>
                     s.styles.map((style) => (
                       <option key={style.id} value={style.id}>
                         {s.name} ({style.name})
                       </option>
-                    ))
-                  ))}
+                    )),
+                  )}
                 </select>
               )}
             </div>
@@ -170,7 +160,7 @@ const Home = () => {
               disabled={loading || !text.trim() || loadingSpeakers}
               style={{
                 ...styles.button,
-                ...(loading || !text.trim() || loadingSpeakers ? styles.buttonDisabled : {})
+                ...(loading || !text.trim() || loadingSpeakers ? styles.buttonDisabled : {}),
               }}
             >
               {loading && <div style={styles.buttonPulse} />}
@@ -216,9 +206,9 @@ const Home = () => {
                   {isPlaying && (
                     <div style={styles.playingBadge}>
                       <div style={styles.waveContainer}>
-                        <div style={{...styles.waveBar, animationDelay: '0s'}} />
-                        <div style={{...styles.waveBar, animationDelay: '0.1s'}} />
-                        <div style={{...styles.waveBar, animationDelay: '0.2s'}} />
+                        <div style={{ ...styles.waveBar, animationDelay: '0s' }} />
+                        <div style={{ ...styles.waveBar, animationDelay: '0.1s' }} />
+                        <div style={{ ...styles.waveBar, animationDelay: '0.2s' }} />
                       </div>
                       <span style={styles.playingText}>再生中</span>
                     </div>
