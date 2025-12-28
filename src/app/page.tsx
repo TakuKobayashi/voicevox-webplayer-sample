@@ -62,7 +62,7 @@ const Home = () => {
       const url = URL.createObjectURL(audioBlob);
       setAudioUrl(url);
     } catch (err) {
-      setError(err.message || '音声合成中にエラーが発生しました');
+      setError('音声合成中にエラーが発生しました');
     } finally {
       setLoading(false);
     }
