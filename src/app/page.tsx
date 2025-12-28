@@ -1,19 +1,31 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Volume2, Loader2, Download, AlertCircle } from 'lucide-react';
 import axios from 'axios';
 
-const Home = () => {
-  const [text, setText] = useState('');
-  const [speaker, setSpeaker] = useState(3);
-  const [speakers, setSpeakers] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+interface SpeakerStyle {
+  id: number;
+  name: string;
+}
+
+interface Speaker {
+  name: string;
+  speaker_uuid: string;
+  styles: SpeakerStyle[];
+  version: string;
+}
+
+const Home: React.FC = () => {
+  const [text, setText] = useState<string>('');
+  const [speaker, setSpeaker] = useState<number>(3);
+  const [speakers, setSpeakers] = useState<Speaker[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>('');
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
-  const [loadingSpeakers, setLoadingSpeakers] = useState(true);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [audioRef, setAudioRef] = useState(null);
+  const [loadingSpeakers, setLoadingSpeakers] = useState<boolean>(true);
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const [audioRef, setAudioRef] = useState<HTMLAudioElement | null>(null);
 
   const VOICEVOX_API = process.env.NEXT_PUBLIC_VOICEVOX_API_ROOT_URL;
 
@@ -241,7 +253,7 @@ const Home = () => {
   );
 };
 
-const styles = {
+const styles: { [key: string]: React.CSSProperties } = {
   container: {
     minHeight: '100vh',
     background: 'linear-gradient(135deg, #faf5ff 0%, #eff6ff 50%, #fdf2f8 100%)',
