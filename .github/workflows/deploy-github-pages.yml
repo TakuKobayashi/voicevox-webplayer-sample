@@ -28,8 +28,10 @@ jobs:
       working-directory: ${{ matrix.root-project-path }}
       env:
         BASE_PATH: ${{ secrets.BASE_PATH }}
+        NEXT_PUBLIC_VOICEVOX_API_ROOT_URL: ${{ secrets.NEXT_PUBLIC_VOICEVOX_API_ROOT_URL }}
       run: |
         echo "BASE_PATH=${BASE_PATH}" >> ./.env
+        echo "NEXT_PUBLIC_VOICEVOX_API_ROOT_URL=${NEXT_PUBLIC_VOICEVOX_API_ROOT_URL}" >> ./.env
     - name: build html
       working-directory: ${{ matrix.root-project-path }}
       run: yarn run build
