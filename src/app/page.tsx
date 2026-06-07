@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { Volume2, Loader2, Download, AlertCircle } from 'lucide-react';
-import axios from 'axios';
 
 interface SpeakerStyle {
   id: number;
@@ -34,12 +33,13 @@ const Home: React.FC = () => {
   }, []);
 
   const fetchSpeakers = async () => {
-    const response = await axios.get(`${VOICEVOX_API}/speakers`).catch((error) => {
+    const response = await fetch(`${VOICEVOX_API}/speakers`).catch((error) => {
       setError('Voicevox APIに接続できません。ローカルでVoicevoxが起動しているか確認してください。');
       setLoadingSpeakers(false);
       return Promise.reject(error);
     });
-    setSpeakers(response.data);
+    const speakersJson = await response.json();
+    setSpeakers(speakersJson);
     setLoadingSpeakers(false);
   };
 
