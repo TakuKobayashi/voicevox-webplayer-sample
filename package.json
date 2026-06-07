@@ -10,6 +10,7 @@
     "format": "prettier --config .prettierrc --write \"src/**/*.{ts,js,tsx,jsx}\""
   },
   "dependencies": {
+    "jotai": "^2.20.0",
     "lucide-react": "^1.17.0",
     "next": "16.2.7",
     "react": "19.2.7",

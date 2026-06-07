@@ -2,34 +2,29 @@
 
 import React, { useState, useEffect } from 'react';
 import { Volume2, Loader2, Download, AlertCircle } from 'lucide-react';
-
-interface SpeakerStyle {
-  id: number;
-  name: string;
-}
-
-interface Speaker {
-  name: string;
-  speaker_uuid: string;
-  styles: SpeakerStyle[];
-  version: string;
-}
+import { speakersAtom, SpeakerStyle } from '../lib/speakersAtom';
+import { useAtom } from 'jotai';
 
 const Home: React.FC = () => {
   const [text, setText] = useState<string>('');
   const [speaker, setSpeaker] = useState<number>(3);
-  const [speakers, setSpeakers] = useState<Speaker[]>([]);
+  const [speakers, setSpeakers] = useAtom(speakersAtom);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [loadingSpeakers, setLoadingSpeakers] = useState<boolean>(true);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
-  const [audioRef, setAudioRef] = useState<HTMLAudioElement | null>(null);
 
   const VOICEVOX_API = process.env.NEXT_PUBLIC_VOICEVOX_API_ROOT_URL;
 
   useEffect(() => {
-    fetchSpeakers();
+    (async () => {
+      // jotai atom にキャッシュ済みならAPIを叩かない
+      const speakerList = speakers ?? (await fetchSpeakers());
+      if (!speakers) {
+        setSpeakers(speakerList);
+      }
+    })
   }, []);
 
   const fetchSpeakers = async () => {
@@ -38,9 +33,8 @@ const Home: React.FC = () => {
       setLoadingSpeakers(false);
       return Promise.reject(error);
     });
-    const speakersJson = await response.json();
-    setSpeakers(speakersJson);
     setLoadingSpeakers(false);
+    return response.json();
   };
 
   const synthesize = async () => {
@@ -141,7 +135,7 @@ const Home: React.FC = () => {
                 </div>
               ) : (
                 <select value={speaker} onChange={(e) => setSpeaker(Number(e.target.value))} style={styles.select} disabled={loading}>
-                  {speakers.map((s) =>
+                  {speakers?.map((s) =>
                     s.styles.map((style) => (
                       <option key={style.id} value={style.id}>
                         {s.name} ({style.name})
@@ -225,7 +219,6 @@ const Home: React.FC = () => {
                   )}
                 </div>
                 <audio
-                  ref={setAudioRef}
                   controls
                   src={audioUrl}
                   style={styles.audio}
