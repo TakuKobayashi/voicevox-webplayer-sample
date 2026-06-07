@@ -1,36 +1,61 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Voicevox Webplayer サンプルアプリ
 
-## Getting Started
+このプロジェクトは、[Voicevox](https://voicevox.hiroshiba.com/) API を利用してテキストから音声を生成し、音声ファイルをダウンロードできるサンプルアプリケーションです。  
+ローカルで Voicevox を起動してからご利用ください。
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🎯 目的
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- Voicevox API との連携方法をデモする
+- テキスト入力から音声合成・ダウンロードの一連のフローを体験可能にする
+- Next.js での API クライアント実装のサンプルを提供する
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🚀 CLI での起動手順
 
-## Learn More
+1. **プロジェクトクローン**
+   ```bash
+   git clone https://github.com/takukobayashi/voicevox-webplayer-sample.git
+   cd voicevox-webplayer-sample
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+2. **依存関係のインストール**
+   ```bash
+   npm install
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+3. **環境変数の設定**
+   - `.env` ファイルを作成し、以下を設定:
+     ```env
+     NEXT_PUBLIC_VOICEVOX_API_ROOT_URL=http://localhost:50021
+     ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+4. **ローカルでの起動**
+   ```bash
+   npm run dev
+   ```
+   - ブラウザで `http://localhost:3000` にアクセス
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🧪 デモ環境
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+[デモサイトはこちら](https://takukobayashi.github.io/voicevox-webplayer-sample/)  
+（GitHub Pages でホストされている公開バージョン）
+
+---
+
+## ⚠️ 注意事項
+
+- ローカルで Voicevox サーバーを起動していないと動作しません
+- デモ環境では `http://localhost:50021` を API エンドポイントとして使用しています
+- プロダクション環境では `NEXT_PUBLIC_VOICEVOX_API_ROOT_URL` を適切な値に変更してください
+
+---
+
+
+## 📢 フィードバック
+
+ご意見・ご質問は [GitHub Issues](https://github.com/takukobayashi/voicevox-webplayer-sample/issues) へご投稿ください。
