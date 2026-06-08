@@ -2,12 +2,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { Volume2, Loader2, Download, AlertCircle } from 'lucide-react';
-import { speakersAtom, SpeakerStyle } from '../lib/speakersAtom';
+import { speakersAtom, slectSpeakerAtom } from '../lib/speakersAtom';
 import { useAtom } from 'jotai';
 
 const Home: React.FC = () => {
   const [text, setText] = useState<string>('');
-  const [speaker, setSpeaker] = useState<number>(3);
+  const [speaker, setSpeaker] = useAtom(slectSpeakerAtom);
   const [speakers, setSpeakers] = useAtom(speakersAtom);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>('');

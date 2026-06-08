@@ -70,3 +70,7 @@ export const speakersAtom = atom(
     set(speakersCacheAtom, { data: speakers, cachedAt: Date.now() });
   },
 );
+
+export const slectSpeakerAtom = atomWithStorage<number>('voicevox_select_speaker_number', 3, undefined, {
+  getOnInit: true, // マウント直後に localStorage から読み込む
+});
