@@ -1,5 +1,5 @@
-import { atomWithStorage } from 'jotai/utils';
-import { useEffect } from 'react';
+import { atom } from 'jotai';
+import { atomWithStorage, createJSONStorage } from 'jotai/utils';
 
 export type SpeakerStyle = {
   id: number;
@@ -14,52 +14,59 @@ export type Speaker = {
   version?: string;
 };
 
+// ----------------------------------------------------------------
+// ローカルストレージキャッシュ（有効期間 12 時間）
+// ----------------------------------------------------------------
+
+const CACHE_TTL_MS = 12 * 60 * 60 * 1000; // 12 hours
+
+type SpeakersCache = {
+  data: Speaker[];
+  cachedAt: number;
+};
+
 /**
- * Voicevox から取得したスピーカー一覧をセッション中キャッシュするatom。
- * null = 未取得, Speaker[] = 取得済み
+ * speakers のキャッシュを localStorage に保存する atom。
+ * null = 未取得 or 期限切れ
+ *
+ * Next.js SSG では build 時に localStorage が存在しないため、
+ * createJSONStorage の getItem をブラウザ側のみ実行させる。
  */
-const speakersAtomBase = atomWithStorage<Speaker[] | null>('speakers', null);
-
-// キャッシュの有効期限（12時間）
-const CACHE_DURATION = 12 * 60 * 60 * 1000;
-
-// ローカルストレージからキャッシュデータを取得
-const getCachedSpeakers = (): { speakers: Speaker[] | null; timestamp: number } => {
-  const cachedData = localStorage.getItem('speakersCache');
-  if (cachedData) {
-    const { speakers, timestamp } = JSON.parse(cachedData);
-    return { speakers, timestamp };
+const speakersCacheStorage = createJSONStorage<SpeakersCache | null>(() => {
+  // SSR / build 時は noop ストレージを返す
+  if (typeof window === 'undefined') {
+    return {
+      length: 0,
+      getItem: () => null,
+      setItem: () => {},
+      removeItem: () => {},
+      clear: () => {},
+      key: () => null,
+    } as unknown as Storage;
   }
-  return { speakers: null, timestamp: 0 };
-};
-
-// ローカルストレージにキャッシュデータを保存
-const saveCachedSpeakers = (speakers: Speaker[]) => {
-  const timestamp = Date.now();
-  localStorage.setItem('speakersCache', JSON.stringify({ speakers, timestamp }));
-};
-
-// キャッシュの有効期限をチェックし、必要に応じてキャッシュをクリア
-export const useSpeakerCache = () => {
-  useEffect(() => {
-    const { timestamp } = getCachedSpeakers();
-    if (timestamp && Date.now() - timestamp > CACHE_DURATION) {
-      localStorage.removeItem('speakersCache');
-    }
-  }, []);
-};
-
-// 拡張したatomWithStorageを使用
-export const speakersAtom = atomWithStorage<Speaker[] | null>('speakers', null, {
-  onGet: (value) => {
-    const { speakers, timestamp } = getCachedSpeakers();
-    if (timestamp && Date.now() - timestamp > CACHE_DURATION) {
-      localStorage.removeItem('speakersCache');
-      return null;
-    }
-    return speakers;
-  },
-  onSet: (newValue) => {
-    saveCachedSpeakers(newValue);
-  },
+  return localStorage;
 });
+
+const speakersCacheAtom = atomWithStorage<SpeakersCache | null>('voicevox_speakers_cache', null, speakersCacheStorage, {
+  getOnInit: true, // マウント直後に localStorage から読み込む
+});
+
+// ----------------------------------------------------------------
+// 公開 atom
+// ----------------------------------------------------------------
+
+/**
+ * Voicevox スピーカー一覧。
+ * 読み取り時にキャッシュ期限を検証し、期限切れなら null を返す派生 atom。
+ */
+export const speakersAtom = atom(
+  (get) => {
+    const cache = get(speakersCacheAtom);
+    if (!cache) return null;
+    const isExpired = Date.now() - cache.cachedAt > CACHE_TTL_MS;
+    return isExpired ? null : cache.data;
+  },
+  (_get, set, speakers: Speaker[]) => {
+    set(speakersCacheAtom, { data: speakers, cachedAt: Date.now() });
+  },
+);

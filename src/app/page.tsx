@@ -21,10 +21,11 @@ const Home: React.FC = () => {
     (async () => {
       // jotai atom にキャッシュ済みならAPIを叩かない
       const speakerList = speakers ?? (await fetchSpeakers());
+      setLoadingSpeakers(false);
       if (!speakers) {
         setSpeakers(speakerList);
       }
-    })
+    })();
   }, []);
 
   const fetchSpeakers = async () => {
@@ -33,7 +34,6 @@ const Home: React.FC = () => {
       setLoadingSpeakers(false);
       return Promise.reject(error);
     });
-    setLoadingSpeakers(false);
     return response.json();
   };
 
